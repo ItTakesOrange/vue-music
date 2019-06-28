@@ -8,5 +8,6 @@ module.exports = {
   chainWebpack: config => {
     config.resolve.alias
       .set('common', resolve('src/common'))
+      .set('components', resolve('src/components'))
   }
 }
