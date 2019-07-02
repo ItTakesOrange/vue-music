@@ -2,7 +2,7 @@
   <div class="recommend">
     <div class="recommend-content">
       <div class="slider-wrapper">
-        <slider>
+        <slider v-if="recommends.length">
           <div v-for="(item, index) in recommends" :key="index">
             <a :href="item.linkUrl">
               <img :src="item.picUrl">
@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import Slider from 'base/slide/slide'
+import Slider from 'base/slider/slider'
 import { getRecommend } from 'api/recommend'
 import { ERR_OK } from 'api/config'
 
