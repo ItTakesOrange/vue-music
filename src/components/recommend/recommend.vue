@@ -58,7 +58,7 @@ export default {
   .recommend-content
     height: 100%
     overflow: hidden
-    .slide-wrapper
+    .slider-wrapper
       position: relative
       width: 100%
       overflow hidden
