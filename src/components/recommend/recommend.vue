@@ -1,8 +1,8 @@
 <template>
   <div class="recommend">
     <div class="recommend-content">
-      <div class="slider-wrapper">
-        <slider v-if="recommends.length">
+      <div v-if="recommends.length" class="slider-wrapper">
+        <slider>
           <div v-for="(item, index) in recommends" :key="index">
             <a :href="item.linkUrl">
               <img :src="item.picUrl">
@@ -19,7 +19,7 @@
 
 <script>
 import Slider from 'base/slider/slider'
-import { getRecommend } from 'api/recommend'
+import { getRecommend, getDiscList } from 'api/recommend'
 import { ERR_OK } from 'api/config'
 
 export default {
@@ -31,12 +31,20 @@ export default {
   },
   created () {
     this._getRecommend()
+    this._getDiscList()
   },
   methods: {
     _getRecommend () {
       getRecommend().then(res => {
         if (res.code === ERR_OK) {
           this.recommends = res.data.slider
+        }
+      })
+    },
+    _getDiscList () {
+      getDiscList().then(res => {
+        if (res.code === ERR_OK) {
+          console.log(res.data.list)
         }
       })
     }
