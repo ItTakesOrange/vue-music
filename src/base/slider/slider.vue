@@ -85,10 +85,10 @@ export default {
         scrollY: false, // 纵向滚动
         momentum: false, // 滚动动画
         bounce: false, // 回弹动画
-        snap: {
-          loop: true,
-          threshold: 0.3
-        }
+        snap: true,
+        snapLoop: this.loop,
+        snapThreshold: 0.3,
+        snapSpeed: 400
       })
 
       this.slider.on('scrollEnd', () => {
