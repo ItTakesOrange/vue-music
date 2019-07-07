@@ -7,3 +7,13 @@ export function addClass(el, className) {
     if (hasClass(el, className)) return
     el.classList.add(className)
 }
+
+export function getData(el, name, val) {
+    let prefix = 'data-'
+    name = prefix + name
+    if (val) {
+        return el.setAttribute(name, val)
+    } else {
+        return el.getAttribute(name)
+    }
+}
