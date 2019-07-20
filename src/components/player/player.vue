@@ -86,6 +86,7 @@
   import { prefixStyle } from 'common/js/dom'
   import { playMode } from 'common/js/config'
   import { shuffle } from 'common/js/util'
+  import { getSongUrl } from 'api/song'
 
   const transform = prefixStyle('transform')
 
@@ -285,11 +286,23 @@
         setPlayingState: 'SET_PLAYING_STATE',
         setCurrentIndex: 'SET_CURRENT_INDEX',
         setPlayMode: 'SET_PLAY_MODE',
-        setPlayList: 'SET_PLAYLIST'
+        setPlayList: 'SET_PLAYLIST',
+        setSongUrl: 'SET_SONG_URL'
       })
     },
     watch: {
       currentSong (newSong, oldSong) {
+        if (!newSong.url) {
+          getSongUrl(this.currentSong.mid).then(res => {
+            let { data } = res.req_0
+            let url = data.sip[0] + data.midurlinfo[0].purl
+            this.setSongUrl(url)
+            this.$nextTick(() => {
+              this.$refs.audio.play()
+            })
+          })
+          return
+        }
         if (newSong.id === oldSong.id) {
           return
         }
@@ -298,6 +311,9 @@
         })
       },
       playing (newPlaying) {
+        if (!this.currentSong.url) {
+          return
+        }
         const audio = this.$refs.audio
         this.$nextTick(() => {
           newPlaying ? audio.play() : audio.pause()
