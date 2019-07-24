@@ -147,6 +147,7 @@
 
 <style lang="stylus" scoped>
   @import "~common/stylus/variable"
+  @import "~common/stylus/mixin"
 
   .music-list
     position: fixed
@@ -172,6 +173,7 @@
       left: 10%
       z-index: 40
       width: 80%
+      no-wrap()
       text-align: center
       line-height: 40px
       font-size: $font-size-large-x
