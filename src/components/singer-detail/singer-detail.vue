@@ -29,14 +29,14 @@
       ])
     },
     created () {
-      if (!this.singer.id) {
-        this.$router.push('/singer')
-        return
-      }
       this._getDetail()
     },
     methods: {
       _getDetail () {
+        if (!this.singer.id) {
+          this.$router.push('/singer')
+          return
+        }
         getSingerDetail(this.singer.id).then(res => {
           if (res.code === ERR_OK) {
             this.songs = this._normalizeSongs(res.data.list)
