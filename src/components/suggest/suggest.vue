@@ -4,7 +4,9 @@
     class="suggest"
     :data="result"
     :pullup="pullup" 
+    :beforeScroll="beforeScroll"
     @scrollToEnd="searchMore"
+    @beforeScroll="listScroll"
   >
     <ul class="suggest-list">
       <li 
@@ -22,12 +24,16 @@
       </li>
       <loading v-show="hasMore" title=""></loading>
     </ul>
+    <div v-show="!hasMore && !result.length" class="no-result-wrapper">
+      <no-result title="暂无搜索结果"></no-result>
+    </div>
   </scroll>
 </template>
 
 <script>
   import Scroll from 'base/scroll/scroll'
   import Loading from 'base/loading/loading'
+  import NoResult from 'base/no-result/no-result'
   import { search } from 'api/search'
   import { ERR_OK } from 'api/config'
   import { createSong } from 'common/js/song'
@@ -54,7 +60,8 @@
         page: 1,
         result: [],
         pullup: true,
-        hasMore: true
+        hasMore: true,
+        beforeScroll: true
       }
     },
     methods: {
@@ -109,9 +116,12 @@
           return `${item.name}-${item.singer}`
         }
       },
+      listScroll () {
+        this.$emit('listScroll')
+      },
       _checkMore (data) {
         const song = data.song
-        if (!song.list || song.curnum + (song.curpage - 1) * perpage >= song.totalnum) {
+        if (!song.list.length || song.curnum + (song.curpage - 1) * perpage >= song.totalnum) {
           this.hasMore = false
         }
       },
@@ -148,7 +158,8 @@
     },
     components: {
       Scroll,
-      Loading
+      Loading,
+      NoResult
     }
   }
 </script>
@@ -175,4 +186,9 @@
           flex: 1
           font-size: $font-size-medium
           color: $color-text-d
+    .no-result-wrapper
+      position: absolute
+      width: 100%
+      top: 50%
+      transform: translateY(-50%)  
 </style>
