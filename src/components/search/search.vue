@@ -13,6 +13,15 @@
             </li>
           </ul>
         </div>
+        <div class="search-history" v-show="searchHistory.length > 0">
+          <h1 class="title">
+            <span class="text">搜索历史</span>
+            <span class="clear" @click="clearSearchHistory">
+              <i class="icon-clear"></i>
+            </span>
+          </h1>
+          <search-list :searches="searchHistory" @select="addQuery" @delete="deleteSearchHistory"></search-list>
+        </div>
       </div>
     </div>
     <div class="search-result" v-show="query">
@@ -25,9 +34,10 @@
 <script>
   import SearchBox from 'base/search-box/search-box'
   import Suggest from 'components/suggest/suggest'
+  import SearchList from 'base/search-list/search-list'
   import { getHotKey } from 'api/search'
   import { ERR_OK } from 'api/config'
-  import { mapActions } from 'vuex'
+  import { mapGetters, mapActions } from 'vuex'
 
   export default {
     name: 'Search',
@@ -36,6 +46,11 @@
         hotKey: [],
         query: ''
       }
+    },
+    computed: {
+      ...mapGetters([
+        'searchHistory'
+      ])
     },
     created () {
       this._getHotKey()
@@ -61,18 +76,22 @@
         })
       },
       ...mapActions([
-        'saveSearchHistory'
+        'saveSearchHistory',
+        'deleteSearchHistory',
+        'clearSearchHistory'
       ])
     },
     components: {
       SearchBox,
-      Suggest
+      Suggest,
+      SearchList
     }
   }
 </script>
 
 <style lang="stylus" scoped>
   @import "~common/stylus/variable"
+  @import "~common/stylus/mixin"
 
   .search
     .search-box-wrapper
@@ -99,6 +118,22 @@
             background: $color-highlight-background
             font-size: $font-size-medium
             color: $color-text-d
+        .search-history
+          position: relative
+          margin: 0 20px
+          .title
+            display: flex
+            align-items: center
+            height: 40px
+            font-size: $font-size-medium
+            color: $color-text-l
+            .text
+              flex: 1
+            .clear
+              extend-click()
+              .icon-clear
+                font-size: $font-size-medium
+                color: $color-text-d  
     .search-result
       position: fixed
       top: 178px
