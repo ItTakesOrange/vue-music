@@ -421,6 +421,10 @@
     },
     watch: {
       currentSong (newSong, oldSong) {
+        if (!newSong.id) {
+          return
+        }
+
         const self = this
 
         if (this.currentLyric) {

@@ -10,7 +10,7 @@
           </h1>
         </div>
         <scroll ref="listContent" :data="sequenceList" class="list-content">
-          <ul>
+          <transition-group name="list" tag="ul">
             <li
               ref="listItem"
               class="item" 
@@ -23,11 +23,11 @@
               <span class="like">
                 <i class="icon-not-favorite"></i>
               </span>
-              <span class="delete">
+              <span class="delete" @click.stop="deleteOne(item)">
                 <i class="icon-delete"></i>
               </span>
             </li>
-          </ul>
+          </transition-group>
         </scroll>
         <div class="list-operate">
           <div class="add">
@@ -45,7 +45,7 @@
 
 <script>
 import Scroll from 'base/scroll/scroll'
-import { mapGetters, mapMutations } from 'vuex'
+import { mapGetters, mapMutations, mapActions } from 'vuex'
 import { playMode } from 'common/js/config'
 
 export default {
@@ -95,10 +95,19 @@ export default {
       })
       this.$refs.listContent.scrollToElement(this.$refs.listItem[index], 300)
     },
+    deleteOne(item) {
+      this.deleteSong(item)
+      if (!this.playList.length) {
+        this.hide()
+      }
+    },
     ...mapMutations({
       setCurrentIndex: 'SET_CURRENT_INDEX',
       setPlayingState: 'SET_PLAYING_STATE'
-    })
+    }),
+    ...mapActions([
+      'deleteSong'
+    ])
   },
   watch: {
     currentSong(newSong, oldSong) {
@@ -168,6 +177,10 @@ export default {
         height: 40px
         padding: 0 30px 0 20px
         overflow: hidden
+        &.list-enter-active, &.list-leave-active
+          transition: all .1s
+        &.list-enter, &.list-leave-to
+          height: 0
         .current
           flex: 0 0 20px
           width: 20px
