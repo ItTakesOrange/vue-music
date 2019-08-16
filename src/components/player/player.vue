@@ -111,12 +111,14 @@
   import { shuffle } from 'common/js/util'
   import { getSongUrl } from 'api/song'
   import Lyric from 'lyric-parser'
+  import { playerMixin } from 'common/js/mixin'
 
   const transform = prefixStyle('transform')
   const transitionDuration = prefixStyle('transitionDuration')
 
   export default {
     name: 'Player',
+    mixins: [playerMixin],
     data () {
       return {
         songReady: false,
@@ -135,9 +137,6 @@
       playIcon () {
         return this.playing ? 'icon-pause' : 'icon-play'
       },
-      iconMode () {
-        return this.mode === playMode.sequence ? 'icon-sequence' : this.mode === playMode.loop ? 'icon-loop' : 'icon-random'
-      },
       miniIcon () {
         return this.playing ? 'icon-pause-mini' : 'icon-play-mini'
       },
@@ -149,12 +148,8 @@
       },
       ...mapGetters([
         'fullScreen',
-        'playList',
-        'currentSong',
         'playing',
-        'currentIndex',
-        'mode',
-        'sequenceList'
+        'currentIndex'
       ])
     },
     created () {
@@ -412,10 +407,6 @@
       },
       ...mapMutations({
         setFullScreen: 'SET_FULL_SCREEN',
-        setPlayingState: 'SET_PLAYING_STATE',
-        setCurrentIndex: 'SET_CURRENT_INDEX',
-        setPlayMode: 'SET_PLAY_MODE',
-        setPlayList: 'SET_PLAYLIST',
         setSongUrl: 'SET_SONG_URL'
       })
     },
