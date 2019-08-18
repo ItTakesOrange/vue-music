@@ -12,6 +12,18 @@
       </div>
       <div class="shortcut" v-show="!query">
         <switches :switches="switches" :currentIndex="currentIndex" @switch="switchItem"></switches>
+        <div class="list-wrapper">
+          <scroll ref="songList" v-if="currentIndex === 0" :data="playHistory" class="list-scroll">
+            <div class="list-inner">
+              <song-list :songs="playHistory" @select="selectSong"></song-list>
+            </div>
+          </scroll>
+          <scroll ref="searchList" v-if="currentIndex === 1" :data="searchHistory" class="list-scroll">
+            <div class="list-inner">
+              <search-list :searches="searchHistory" @select="addQuery" @delete="deleteSearchHistory"></search-list>
+            </div>
+          </scroll>
+        </div>
       </div>
       <div class="search-result" v-show="query">
         <suggest :query="query" :showSinger="showSinger" @select="selectSuggest" @listScroll="blurInput"></suggest>
@@ -24,8 +36,12 @@
 import Scroll from 'base/scroll/scroll'
 import SearchBox from 'base/search-box/search-box'
 import Switches from 'base/switches/switches'
+import SongList from 'base/song-list/song-list'
+import SearchList from 'base/search-list/search-list'
 import Suggest from 'components/suggest/suggest'
 import { searchMixin } from 'common/js/mixin'
+import { mapGetters, mapActions } from 'vuex'
+import Song from 'common/js/song'
 
 export default {
   name: 'AddSong',
@@ -41,9 +57,21 @@ export default {
       ]
     }
   },
+  computed: {
+    ...mapGetters([
+      'playHistory'
+    ])
+  },
   methods: {
     show() {
       this.showFlag = true
+      setTimeout(() => {
+        if (this.currentIndex === 0) {
+          this.$refs.songList.refresh()
+        } else {
+          this.$refs.searchList.refresh()
+        }
+      }, 20);
     },
     hide() {
       this.showFlag = false
@@ -53,12 +81,22 @@ export default {
     },
     switchItem(index) {
       this.currentIndex = index
-    }
+    },
+    selectSong(song, index) {
+      if (index !== 0) {
+        this.insertSong(new Song(song))
+      }
+    },
+    ...mapActions([
+      'insertSong'
+    ])
   },
   components: {
     Scroll,
     SearchBox,
     Switches,
+    SongList,
+    SearchList,
     Suggest
   }
 }
@@ -98,6 +136,17 @@ export default {
         color: $color-theme  
   .search-box-wrapper
     margin: 20px
+  .shortcut
+    .list-wrapper
+      position: absolute
+      top: 165px
+      bottom: 0
+      width: 100%
+      .list-scroll
+        height: 100%
+        overflow: hidden
+        .list-inner
+          padding: 20px 30px
   .search-result
     position: fixed
     top: 124px
