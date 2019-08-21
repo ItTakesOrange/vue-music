@@ -18,7 +18,7 @@
               <song-list :songs="playHistory" @select="selectSong"></song-list>
             </div>
           </scroll>
-          <scroll ref="searchList" v-if="currentIndex === 1" :data="searchHistory" class="list-scroll">
+          <scroll ref="searchList" v-if="currentIndex === 1" :data="searchHistory" :refreshDelay="refreshDelay" class="list-scroll">
             <div class="list-inner">
               <search-list :searches="searchHistory" @select="addQuery" @delete="deleteSearchHistory"></search-list>
             </div>
@@ -28,6 +28,10 @@
       <div class="search-result" v-show="query">
         <suggest :query="query" :showSinger="showSinger" @select="selectSuggest" @listScroll="blurInput"></suggest>
       </div>
+      <top-tip ref="topTip" class="top-title">
+        <i class="icon-ok"></i>
+        <span class="text">1首歌曲已经添加到播放队列</span>
+      </top-tip>
     </div>
   </transition>
 </template>
@@ -38,6 +42,7 @@ import SearchBox from 'base/search-box/search-box'
 import Switches from 'base/switches/switches'
 import SongList from 'base/song-list/song-list'
 import SearchList from 'base/search-list/search-list'
+import TopTip from 'base/top-tip/top-tip'
 import Suggest from 'components/suggest/suggest'
 import { searchMixin } from 'common/js/mixin'
 import { mapGetters, mapActions } from 'vuex'
@@ -78,6 +83,7 @@ export default {
     },
     selectSuggest() {
       this.saveSearch()
+      this.showTip()
     },
     switchItem(index) {
       this.currentIndex = index
@@ -85,7 +91,11 @@ export default {
     selectSong(song, index) {
       if (index !== 0) {
         this.insertSong(new Song(song))
+        this.showTip()
       }
+    },
+    showTip() {
+      this.$refs.topTip.show()
     },
     ...mapActions([
       'insertSong'
@@ -97,6 +107,7 @@ export default {
     Switches,
     SongList,
     SearchList,
+    TopTip,
     Suggest
   }
 }
@@ -152,4 +163,15 @@ export default {
     top: 124px
     bottom: 0
     width: 100%
+  .top-title
+    text-align: center
+    padding: 18px 0
+    font-size: 0
+    .icon-ok
+      font-size: $font-size-medium
+      color: $color-theme
+      margin-right: 4px
+    .text
+      font-size: $font-size-medium
+      color: $color-text  
 </style>

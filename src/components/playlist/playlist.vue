@@ -9,7 +9,7 @@
             <span class="clear" @click.stop="showConfirm"><i class="icon-clear"></i></span>
           </h1>
         </div>
-        <scroll ref="listContent" :data="sequenceList" class="list-content">
+        <scroll ref="listContent" :data="sequenceList" :refreshDelay="refreshDelay" class="list-content">
           <transition-group name="list" tag="ul">
             <li
               ref="listItem"
@@ -58,7 +58,8 @@ export default {
   mixins: [playerMixin],
   data() {
     return {
-      showFlag: false
+      showFlag: false,
+      refreshDelay: 100
     }
   },
   computed: {
