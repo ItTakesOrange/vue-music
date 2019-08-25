@@ -35,7 +35,8 @@ export const playerMixin = {
       'playList',
       'sequenceList',
       'currentSong',
-      'mode'
+      'mode',
+      'favoriteList'
     ])
   },
   methods: {
@@ -52,17 +53,40 @@ export const playerMixin = {
       this.setPlayList(list)
     },
     resetCurrentIndex (list) {
-      let index = list.findIndex(item => {
+      const index = list.findIndex(item => {
         return item.id === this.currentSong.id
       })
       this.setCurrentIndex(index)
+    },
+    toggleFavorite (song) {
+      if (this.isFavorite(song)) {
+        this.deleteFavoriteList(song)
+      } else {
+        this.saveFavoriteList(song)
+      }
+    },
+    getFavoriteIcon (song) {
+      if (this.isFavorite(song)) {
+        return 'icon-favorite'
+      }
+      return 'icon-not-favorite'
+    },
+    isFavorite (song) {
+      let index = this.favoriteList.findIndex(item => {
+        return item.id === song.id
+      })
+      return index > -1
     },
     ...mapMutations({
       setPlayMode: 'SET_PLAY_MODE',
       setPlayList: 'SET_PLAYLIST',
       setCurrentIndex: 'SET_CURRENT_INDEX',
       setPlayingState: 'SET_PLAYING_STATE'
-    }) 
+    }),
+    ...mapActions([
+      'saveFavoriteList',
+      'deleteFavoriteList'
+    ])
   }
 }
 

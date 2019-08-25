@@ -12,14 +12,27 @@
         <span class="text">随机播放全部</span>
       </div>
       <div ref="listWrapper" class="list-wrapper">
-
+        <scroll ref="favoriteList" v-if="currentIndex === 0" :data="favoriteList" class="list-scroll">
+          <div class="list-inner">
+            <song-list :songs="favoriteList" @select="selectSong"></song-list>
+          </div>
+        </scroll>
+        <scroll ref="playList" v-if="currentIndex === 1" :data="playHistory" class="list-scroll">
+          <div class="list-inner">
+            <song-list :songs="playHistory" @select="selectSong"></song-list>
+          </div>
+        </scroll>
       </div>
     </div>
   </transition>
 </template>
 
 <script>
+import Scroll from 'base/scroll/scroll'
 import Switches from 'base/switches/switches'
+import SongList from 'base/song-list/song-list'
+import { mapGetters, mapActions } from 'vuex'
+import Song from 'common/js/song'
 
 export default {
   name: 'UserCenter',
@@ -32,16 +45,30 @@ export default {
       ]
     }
   },
+  computed: {
+    ...mapGetters([
+      'favoriteList',
+      'playHistory'
+    ])
+  },
   methods: {
     switchItem(index) {
       this.currentIndex = index
     },
     back() {
       this.$router.back()
-    }
+    },
+    selectSong(song, index) {
+      this.insertSong(new Song(song))
+    },
+    ...mapActions([
+      'insertSong'
+    ])
   },
   components: {
-    Switches
+    Scroll,
+    Switches,
+    SongList
   }
 }
 </script>
@@ -91,19 +118,19 @@ export default {
       display: inline-block
       vertical-align: middle
       font-size: $font-size-small
-    .list-wrapper
-      position: absolute
-      top: 110px
-      bottom: 0
-      width: 100%
-      .list-scroll
-        height: 100%
-        overflow: hidden
-        .list-inner
-          padding: 20px 30px
-    .no-result-wrapper
-      position: absolute
-      width: 100%
-      top: 50%
-      transform: translateY(-50%)                  
+  .list-wrapper
+    position: absolute
+    top: 110px
+    bottom: 0
+    width: 100%
+    .list-scroll
+      height: 100%
+      overflow: hidden
+      .list-inner
+        padding: 20px 30px
+  .no-result-wrapper
+    position: absolute
+    width: 100%
+    top: 50%
+    transform: translateY(-50%)                  
 </style>
