@@ -23,7 +23,7 @@ export const selectPlay = ({ commit, state }, { list, index }) => {
   commit(types.SET_FULL_SCREEN, true)
 }
 
-export const randomPlay = ({ commit, state }, { list }) => {
+export const randomPlay = ({ commit }, { list }) => {
   commit(types.SET_PLAY_MODE, playMode.random)
   commit(types.SET_SEQUENCE_LIST, list)
   let randomList = shuffle(list)
